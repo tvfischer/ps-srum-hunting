@@ -79,3 +79,4 @@
 			Write-Output -InputObject ([PSCustomObject]@{Instance=$Instance;Session=$Session;DatabaseId=$DatabaseId;Path=$Path})
 		}
 	}
+	
