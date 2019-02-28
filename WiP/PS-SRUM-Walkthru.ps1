@@ -86,35 +86,35 @@ if ([Microsoft.Isam.Esent.Interop.Api]::TryMoveFirst($Session, $TableAPPU.JetTab
 			switch ($Column.Coltyp) 
 			{
 				([Microsoft.Isam.Esent.Interop.JET_coltyp]::Bit) {
-					$Buffer = [Microsoft.Isam.Esent.Interop.Api]::RetrieveColumnAsBoolean($Session, $Table.JetTableid, $Column.Columnid)
+					$Buffer = [Microsoft.Isam.Esent.Interop.Api]::RetrieveColumnAsBoolean($Session, $TableAPPU.JetTableid, $Column.Columnid)
 					break
 				}
 				([Microsoft.Isam.Esent.Interop.JET_coltyp]::DateTime) {
-					$Buffer = [Microsoft.Isam.Esent.Interop.Api]::RetrieveColumnAsDateTime($Session, $Table.JetTableid, $Column.Columnid)
+					$Buffer = [Microsoft.Isam.Esent.Interop.Api]::RetrieveColumnAsDateTime($Session, $TableAPPU.JetTableid, $Column.Columnid)
 					break
 				}
 				([Microsoft.Isam.Esent.Interop.JET_coltyp]::IEEEDouble) {
-					$Buffer = [Microsoft.Isam.Esent.Interop.Api]::RetrieveColumnAsDouble($Session, $Table.JetTableid, $Column.Columnid)
+					$Buffer = [Microsoft.Isam.Esent.Interop.Api]::RetrieveColumnAsDouble($Session, $TableAPPU.JetTableid, $Column.Columnid)
 					break
 				}
 				([Microsoft.Isam.Esent.Interop.JET_coltyp]::IEEESingle) {
-					$Buffer = [Microsoft.Isam.Esent.Interop.Api]::RetrieveColumnAsFloat($Session, $Table.JetTableid, $Column.Columnid)
+					$Buffer = [Microsoft.Isam.Esent.Interop.Api]::RetrieveColumnAsFloat($Session, $TableAPPU.JetTableid, $Column.Columnid)
 					break
 				}
 				([Microsoft.Isam.Esent.Interop.JET_coltyp]::Long) {
-					$Buffer = [Microsoft.Isam.Esent.Interop.Api]::RetrieveColumnAsInt32($Session, $Table.JetTableid, $Column.Columnid)
+					$Buffer = [Microsoft.Isam.Esent.Interop.Api]::RetrieveColumnAsInt32($Session, $TableAPPU.JetTableid, $Column.Columnid)
 					break
 				}
 				([Microsoft.Isam.Esent.Interop.JET_coltyp]::Binary) {
-					$Buffer = [Microsoft.Isam.Esent.Interop.Api]::RetrieveColumnAsString($Session, $Table.JetTableid, $Column.Columnid, [System.Text.Encoding]::UTF8)
+					$Buffer = [Microsoft.Isam.Esent.Interop.Api]::RetrieveColumnAsString($Session, $TableAPPU.JetTableid, $Column.Columnid, [System.Text.Encoding]::UTF8)
 					break
 				}
 				([Microsoft.Isam.Esent.Interop.JET_coltyp]::LongBinary) {
-					$Buffer = [Microsoft.Isam.Esent.Interop.Api]::RetrieveColumnAsString($Session, $Table.JetTableid, $Column.Columnid, [System.Text.Encoding]::UTF8)
+					$Buffer = [Microsoft.Isam.Esent.Interop.Api]::RetrieveColumnAsString($Session, $TableAPPU.JetTableid, $Column.Columnid, [System.Text.Encoding]::UTF8)
 					break
 				}
 				([Microsoft.Isam.Esent.Interop.JET_coltyp]::LongText) {
-					$Buffer = [Microsoft.Isam.Esent.Interop.Api]::RetrieveColumnAsString($Session, $Table.JetTableid, $Column.Columnid, [System.Text.Encoding]::UTF8)
+					$Buffer = [Microsoft.Isam.Esent.Interop.Api]::RetrieveColumnAsString($Session, $TableAPPU.JetTableid, $Column.Columnid, [System.Text.Encoding]::UTF8)
                             
 					#Replace null characters which are 0x0000 unicode                                                     
 					if (![System.String]::IsNullOrEmpty($Buffer)) {
@@ -123,7 +123,7 @@ if ([Microsoft.Isam.Esent.Interop.Api]::TryMoveFirst($Session, $TableAPPU.JetTab
 					break
 				}
 				([Microsoft.Isam.Esent.Interop.JET_coltyp]::Text) {
-					$Buffer = [Microsoft.Isam.Esent.Interop.Api]::RetrieveColumnAsString($Session, $Table.JetTableid, $Column.Columnid, [System.Text.Encoding]::UTF8)
+					$Buffer = [Microsoft.Isam.Esent.Interop.Api]::RetrieveColumnAsString($Session, $TableAPPU.JetTableid, $Column.Columnid, [System.Text.Encoding]::UTF8)
                                 
 					#Replace null characters which are 0x0000 unicode                                                     
 					if (![System.String]::IsNullOrEmpty($Buffer)) {
@@ -132,7 +132,7 @@ if ([Microsoft.Isam.Esent.Interop.Api]::TryMoveFirst($Session, $TableAPPU.JetTab
 					break
 				}
 				([Microsoft.Isam.Esent.Interop.JET_coltyp]::Currency) {
-					$Buffer = [Microsoft.Isam.Esent.Interop.Api]::RetrieveColumnAsString($Session, $Table.JetTableid, $Column.Columnid, [System.Text.Encoding]::UTF8)
+					$Buffer = [Microsoft.Isam.Esent.Interop.Api]::RetrieveColumnAsString($Session, $TableAPPU.JetTableid, $Column.Columnid, [System.Text.Encoding]::UTF8)
                               
 					#Replace null characters which are 0x0000 unicode                                                     
 					if (![System.String]::IsNullOrEmpty($Buffer)) {
@@ -141,20 +141,20 @@ if ([Microsoft.Isam.Esent.Interop.Api]::TryMoveFirst($Session, $TableAPPU.JetTab
 					break
 				}
 				([Microsoft.Isam.Esent.Interop.JET_coltyp]::Short) {
-					$Buffer = [Microsoft.Isam.Esent.Interop.Api]::RetrieveColumnAsInt16($Session, $Table.JetTableid, $Column.Columnid)
+					$Buffer = [Microsoft.Isam.Esent.Interop.Api]::RetrieveColumnAsInt16($Session, $TableAPPU.JetTableid, $Column.Columnid)
 					break
 				}
 				([Microsoft.Isam.Esent.Interop.JET_coltyp]::UnsignedByte) {
-					$Buffer = [Microsoft.Isam.Esent.Interop.Api]::RetrieveColumnAsByte($Session, $Table.JetTableid, $Column.Columnid)
+					$Buffer = [Microsoft.Isam.Esent.Interop.Api]::RetrieveColumnAsByte($Session, $TableAPPU.JetTableid, $Column.Columnid)
 					break
 				}
 				(14) {
-					$Buffer = [Microsoft.Isam.Esent.Interop.Api]::RetrieveColumnAsInt32($Session, $Table.JetTableid, $Column.Columnid)
+					$Buffer = [Microsoft.Isam.Esent.Interop.Api]::RetrieveColumnAsInt32($Session, $TableAPPU.JetTableid, $Column.Columnid)
 					break
 				}
 				(15) {
 				    try {
-					$Buffer = [Microsoft.Isam.Esent.Interop.Api]::RetrieveColumnAsInt64($Session, $Table.JetTableid, $Column.Columnid)
+					$Buffer = [Microsoft.Isam.Esent.Interop.Api]::RetrieveColumnAsInt64($Session, $TableAPPU.JetTableid, $Column.Columnid)
 				} catch { $Buffer = "Error"}
 					if ( $Buffer -Ne "Error" ) {		
 					try {
