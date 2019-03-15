@@ -63,3 +63,5 @@ Database Table Name Description
 {D10CA2FE-6FCF-4F6D-848E-B2E99266FA86} Windows Push Notification data 
 {FEE4E14F-02A9-4550-B5CE-5FA2DA202E37} Energy usage data 
 {FEE4E14F-02A9-4550-B5CE-5FA2DA202E37}LT Energy usage data
+SruDbCheckpointTable
+SruDbIdMapTable
