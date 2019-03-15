@@ -1,3 +1,7 @@
+﻿# Ultraedit Project Files
+*.pui
+*.prj
+
 # Prerequisites
 *.d
 
