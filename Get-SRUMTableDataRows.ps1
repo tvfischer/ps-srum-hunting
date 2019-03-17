@@ -25,11 +25,7 @@ Function Get-SRUMTableDataRows{
       [Parameter(Position=0,Mandatory = $true,
        ParameterSetName = "JetTable")]
       [ValidateNotNull()]
-      [Microsoft.Isam.Esent.Interop.Table]$JetTable,
-      [Parameter(Position=1,Mandatory = $true,
-       ParameterSetName = "TableColumns")]
-      [ValidateNotNull()]
-      [Microsoft.Isam.Esent.Interop.ColumnInfo[]]$Columns
+      $JetTable
   )
   
   Begin{
