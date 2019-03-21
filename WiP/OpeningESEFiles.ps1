@@ -1,12 +1,19 @@
+<#
+	Playing with some standard JET dabase connection powershell Code
+	This is somewhat easy to find on posh or even github
+
+#>
+
+
 ﻿			[System.Int32]$FileType = -1
 			[Microsoft.Isam.Esent.Interop.Api]::JetGetDatabaseFileInfo($Path, [ref]$FileType, [Microsoft.Isam.Esent.Interop.JET_DbInfo]::FileType)
 			[Microsoft.Isam.Esent.Interop.JET_filetype]$DBType = [Microsoft.Isam.Esent.Interop.JET_filetype]($FileType)
 
 			Write-Verbose -Message "File type $DBType."
-		
-			if ($DBType -eq [Microsoft.Isam.Esent.Interop.JET_filetype]::Database) 
+
+			if ($DBType -eq [Microsoft.Isam.Esent.Interop.JET_filetype]::Database)
 			{
-				if ($PageSize -eq -1 -or ($PageSize % 1024 -ne 0)) 
+				if ($PageSize -eq -1 -or ($PageSize % 1024 -ne 0))
 				{
 					[Microsoft.Isam.Esent.Interop.Api]::JetGetDatabaseFileInfo($Path, [ref]$PageSize, [Microsoft.Isam.Esent.Interop.JET_DbInfo]::PageSize)
 				}
@@ -25,9 +32,9 @@
 
 				[Microsoft.Isam.Esent.Interop.JET_DBID]$DatabaseId = New-Object -TypeName Microsoft.Isam.Esent.Interop.JET_DBID
 
-				try 
+				try
 				{
-					try 
+					try
 					{
 						$Temp = [Microsoft.Isam.Esent.Interop.Api]::JetAttachDatabase($Session, $Path, [Microsoft.Isam.Esent.Interop.AttachDatabaseGrbit]::ReadOnly)
 						$Temp = [Microsoft.Isam.Esent.Interop.Api]::JetOpenDatabase($Session, $Path, $Connect, [ref]$DatabaseId, [Microsoft.Isam.Esent.Interop.OpenDatabaseGrbit]::ReadOnly)
@@ -39,12 +46,12 @@
 
 						& "$env:SystemRoot\System32\esentutl.exe" "/r" "$LogPrefix"
 
-						try 
+						try
 						{
 							$Temp = [Microsoft.Isam.Esent.Interop.Api]::JetAttachDatabase($Session, $Path, [Microsoft.Isam.Esent.Interop.AttachDatabaseGrbit]::ReadOnly)
 							$Temp = [Microsoft.Isam.Esent.Interop.Api]::JetOpenDatabase($Session, $Path, $Connect, [ref]$DatabaseId, [Microsoft.Isam.Esent.Interop.OpenDatabaseGrbit]::ReadOnly)
 						}
-						catch [Exception] 
+						catch [Exception]
 						{
 							Write-Verbose -Message "Recovery failed, running repair on $Path."
 							& "$env:SystemRoot\System32\esentutl.exe" "/p" "$Path" "/o"
@@ -53,14 +60,14 @@
 						}
 					}
 				}
-				catch [Exception] 
+				catch [Exception]
 				{
 					Write-Verbose -Message $_.Exception.Message
 					Write-Verbose -Message "Shutting down database due to exception."
 
-					try 
+					try
 					{
-						[Microsoft.Isam.Esent.Interop.Api]::JetDetachDatabase($Session, $Path)					
+						[Microsoft.Isam.Esent.Interop.Api]::JetDetachDatabase($Session, $Path)
 					}
 					finally
 					{
@@ -71,7 +78,7 @@
 					}
 				}
 			}
-			else 
+			else
 			{
 				throw "The path must be to a database, the selected path was a $DBType."
 			}
@@ -79,4 +86,3 @@
 			Write-Output -InputObject ([PSCustomObject]@{Instance=$Instance;Session=$Session;DatabaseId=$DatabaseId;Path=$Path})
 		}
 	}
-	

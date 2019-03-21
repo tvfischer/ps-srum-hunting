@@ -16,7 +16,7 @@
 .OUTPUTS
   <Outputs if any, otherwise state None - example: Log file stored in C:\Windows\Temp\<name>.log>
 
-  
+
 .EXAMPLE
   <Example goes here. Repeat this attribute for more than one example>
 #>
@@ -26,26 +26,27 @@ Function Get-SRUMTableDataRows{
        ParameterSetName = "JetTable")]
       [ValidateNotNull()]
       $JetTable
+      # Oops need to add the session as a parameter
   )
-  
+
   Begin{
   }
-  
+
   Process{
     $DBRows = @()
     Try{
-        
+
         [Microsoft.Isam.Esent.Interop.ColumnInfo[]]$Columns = [Microsoft.Isam.Esent.Interop.Api]::GetTableColumns($Session, $JetTable.JetTableid)
 
-        if ([Microsoft.Isam.Esent.Interop.Api]::TryMoveFirst($Session, $JetTable.JetTableid)) 
+        if ([Microsoft.Isam.Esent.Interop.Api]::TryMoveFirst($Session, $JetTable.JetTableid))
         {
-            do 
+            do
             {
                 $Row = New-Object PSObject
 
-                foreach ($Column in $Columns) 
-                { 
-                    switch ($Column.Coltyp) 
+                foreach ($Column in $Columns)
+                {
+                    switch ($Column.Coltyp)
                     {
                         ([Microsoft.Isam.Esent.Interop.JET_coltyp]::Bit) {
                             $Buffer = [Microsoft.Isam.Esent.Interop.Api]::RetrieveColumnAsBoolean($Session, $JetTable.JetTableid, $Column.Columnid)
@@ -77,8 +78,8 @@ Function Get-SRUMTableDataRows{
                         }
                         ([Microsoft.Isam.Esent.Interop.JET_coltyp]::LongText) {
                             $Buffer = [Microsoft.Isam.Esent.Interop.Api]::RetrieveColumnAsString($Session, $JetTable.JetTableid, $Column.Columnid, [System.Text.Encoding]::UTF8)
-                                    
-                            #Replace null characters which are 0x0000 unicode                                                     
+
+                            #Replace null characters which are 0x0000 unicode
                             if (![System.String]::IsNullOrEmpty($Buffer)) {
                                 $Buffer = $Buffer.Replace("`0", "")
                             }
@@ -86,8 +87,8 @@ Function Get-SRUMTableDataRows{
                         }
                         ([Microsoft.Isam.Esent.Interop.JET_coltyp]::Text) {
                             $Buffer = [Microsoft.Isam.Esent.Interop.Api]::RetrieveColumnAsString($Session, $JetTable.JetTableid, $Column.Columnid, [System.Text.Encoding]::UTF8)
-                                        
-                            #Replace null characters which are 0x0000 unicode                                                     
+
+                            #Replace null characters which are 0x0000 unicode
                             if (![System.String]::IsNullOrEmpty($Buffer)) {
                                 $Buffer = $Buffer.Replace("`0", "")
                             }
@@ -95,8 +96,8 @@ Function Get-SRUMTableDataRows{
                         }
                         ([Microsoft.Isam.Esent.Interop.JET_coltyp]::Currency) {
                             $Buffer = [Microsoft.Isam.Esent.Interop.Api]::RetrieveColumnAsString($Session, $JetTable.JetTableid, $Column.Columnid, [System.Text.Encoding]::UTF8)
-                                      
-                            #Replace null characters which are 0x0000 unicode                                                     
+
+                            #Replace null characters which are 0x0000 unicode
                             if (![System.String]::IsNullOrEmpty($Buffer)) {
                                 $Buffer = $Buffer.Replace("`0", "")
                             }
@@ -118,11 +119,11 @@ Function Get-SRUMTableDataRows{
                             try {
                             $Buffer = [Microsoft.Isam.Esent.Interop.Api]::RetrieveColumnAsInt64($Session, $JetTable.JetTableid, $Column.Columnid)
                         } catch { $Buffer = "Error"}
-                            if ( $Buffer -Ne "Error" ) {        
+                            if ( $Buffer -Ne "Error" ) {
                             try {
                                 $DateTime = [System.DateTime]::FromBinary($Buffer)
                                 $DateTime = $DateTime.AddYears(1600)
-                                       
+
                                 if ($DateTime -gt (Get-Date -Year 1970 -Month 1 -Day 1) -and $DateTime -lt ([System.DateTime]::UtcNow.Add($FutureTimeLimit))) {
                                     $Buffer = $DateTime
                                 }
@@ -130,8 +131,8 @@ Function Get-SRUMTableDataRows{
                             catch {}
                         }
 
-                                    
-                            break                           
+
+                            break
                         }
                         default {
                             Write-Warning -Message "Did not match column type to $_"
@@ -142,23 +143,23 @@ Function Get-SRUMTableDataRows{
 
                      $Row | Add-Member -type NoteProperty -name $Column.Name -Value $Buffer
 
-                                   
+
                 }
 
                 $DBRows += $Row
 
-                
-            } while ([Microsoft.Isam.Esent.Interop.Api]::TryMoveNext($Session, $JetTable.JetTableid))               
+
+            } while ([Microsoft.Isam.Esent.Interop.Api]::TryMoveNext($Session, $JetTable.JetTableid))
         }
     }
-    
+
     Catch{
       Write-Output "Could not read table"
       Break
     }
     return $DBRows
   }
-  
+
   End{
 
   }

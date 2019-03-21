@@ -1,11 +1,18 @@
-﻿# ps-srum-hunting
-PowerShell Script to facilitate the processing of SRUM data for on-the-fly forensics and if needed threat hunting
+﻿# ps-srum-hunting - a PowerShell Threat Hunting Dcript Repository
 
+PowerShell Script to facilitate the processing of SRUM data for on-the-fly forensics and to initiate simple investigation or use as a potential threat hunting tool.
+
+*NOTE-1*: This Repository is currently under development and is being shared to get as much input as possible on feature sets and directions.
+
+*NOTE-2*: This is currently raw material and requires a lot ot TLC which will come
 
 
 ## Repository Task List
 The following activities still need processing and completion.
-- [ ] Build a module
+- [ ] Fix get table rows to process information in SruDbIdMapTable, need a separate function
+- [ ] Build script to merge SruDBID references into other table data extracts
+- [ ] Pull registry information
+- [ ] Build a module for SRUM
 - [ ] ???
 
 ## References, inspirations and useful connections
