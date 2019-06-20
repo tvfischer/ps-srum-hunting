@@ -1,6 +1,6 @@
 ﻿<#
 .NOTES
-  Version:        1.0
+  Version:        1.01
   Author:         Thomas V Fischer
   Creation Date:  20190315
   Purpose/Change: Initial script development
