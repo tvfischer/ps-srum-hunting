@@ -5,8 +5,9 @@
   Creation Date:  20190315
   Purpose/Change: Initial script development
 .SYNOPSIS
-   Script: Get-SRUMDB
-   Open the SRUM database with ESENT DLL
+   Script: Get-SRUMTableColumnNames
+   Once a session has been created to the SRUMDB, we can pull out the table name references.
+   This function uses the Jet session to query database for which tables are available and returns a list of table names
 .DESCRIPTION
   <Brief description of script>
 .PARAMETER <Parameter_Name>
@@ -16,30 +17,35 @@
 .OUTPUTS
   <Outputs if any, otherwise state None - example: Log file stored in C:\Windows\Temp\<name>.log>
 
-  
+
 .EXAMPLE
   <Example goes here. Repeat this attribute for more than one example>
 #>
-Function Get-SRUMDB{
-  Param()
-  
+Function Get-SRUMTableNames{
+  Param(
+        [Parameter(Position=0,Mandatory = $true),
+        ParameterSetNAme = "Session"]
+        [ValidateNotNull()]
+        $Session
+  )
+
   Begin{
   }
-  
+
   Process{
+    $DBNames = @()
     Try{
-      <code goes here>
+      [Microsoft.Isam.Esent.Interop.Api]::GetTableNames($Session, $DatabaseId)
     }
-    
+
     Catch{
-       <code goes here>
+      Write-Output "Could not fetch table names"
+      $TableNames = [PSCustomObject]@{StatusID=0;Status="Error";$DBNames}
       Break
     }
   }
-  
+
   End{
-    If($?){
-       <code goes here>
-    }
+
   }
 }
