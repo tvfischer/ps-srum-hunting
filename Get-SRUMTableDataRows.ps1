@@ -22,14 +22,12 @@
 #>
 Function Get-SRUMTableDataRows{
   Param(
-      [Parameter(Position=0,Mandatory = $true),
-      ParameterSetNAme = "Session"]
+      [Parameter(Position=0,Mandatory = $true)]
       [ValidateNotNull()]
       $Session,
       ## Need to figure out if I should include the variable type [Microsoft.Isam.Esent.Interop.JET_SESID].
       ## Don't think so but using it might be safer to ensure proper variable is passed
-      [Parameter(Position=1,Mandatory = $true,
-       ParameterSetName = "JetTable")]
+      [Parameter(Position=1,Mandatory = $true)]
       [ValidateNotNull()]
       $JetTable
   )
