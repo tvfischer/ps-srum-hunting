@@ -32,7 +32,7 @@ Function Get-SRUMTableDataRows{
       $JetTable,
       [Parameter(Position=2,Mandatory = $false)]
       [ValidateNotNull()]
-      $BlobStrType=[System.Text.Encoding]::UTF8
+      $BlobStrType=[System.Text.Encoding]::UTF16
   )
 
   Begin{
@@ -75,15 +75,30 @@ Function Get-SRUMTableDataRows{
                             break
                         }
                         ([Microsoft.Isam.Esent.Interop.JET_coltyp]::Binary) {
-                            $Buffer = [Microsoft.Isam.Esent.Interop.Api]::RetrieveColumnAsString($Session, $JetTable.JetTableid, $Column.Columnid, [System.Text.Encoding]::UTF8)
+                            # Default string function retrieves UTF16, so we check the string type we are retrieving
+                            if ( $BlobStrType -eq [System.Text.Encoding]::UTF16 ) {
+                                $Buffer = [Microsoft.Isam.Esent.Interop.Api]::RetrieveColumnAsString($Session, $JetTable.JetTableid, $Column.Columnid)
+                            } else {
+                                $Buffer = [Microsoft.Isam.Esent.Interop.Api]::RetrieveColumnAsString($Session, $JetTable.JetTableid, $Column.Columnid, $BlobStrType)
+                            }
                             break
                         }
                         ([Microsoft.Isam.Esent.Interop.JET_coltyp]::LongBinary) {
-                            $Buffer = [Microsoft.Isam.Esent.Interop.Api]::RetrieveColumnAsString($Session, $JetTable.JetTableid, $Column.Columnid, $BlobStrType)
+                            # Default string function retrieves UTF16, so we check the string type we are retrieving
+                            if ( $BlobStrType -eq [System.Text.Encoding]::UTF16 ) {
+                                $Buffer = [Microsoft.Isam.Esent.Interop.Api]::RetrieveColumnAsString($Session, $JetTable.JetTableid, $Column.Columnid)
+                            } else {
+                                $Buffer = [Microsoft.Isam.Esent.Interop.Api]::RetrieveColumnAsString($Session, $JetTable.JetTableid, $Column.Columnid, $BlobStrType)
+                            }
                             break
                         }
                         ([Microsoft.Isam.Esent.Interop.JET_coltyp]::LongText) {
-                            $Buffer = [Microsoft.Isam.Esent.Interop.Api]::RetrieveColumnAsString($Session, $JetTable.JetTableid, $Column.Columnid, [System.Text.Encoding]::UTF8)
+                            # Default string function retrieves UTF16, so we check the string type we are retrieving
+                            if ( $BlobStrType -eq [System.Text.Encoding]::UTF16 ) {
+                                $Buffer = [Microsoft.Isam.Esent.Interop.Api]::RetrieveColumnAsString($Session, $JetTable.JetTableid, $Column.Columnid)
+                            } else {
+                                $Buffer = [Microsoft.Isam.Esent.Interop.Api]::RetrieveColumnAsString($Session, $JetTable.JetTableid, $Column.Columnid, $BlobStrType)
+                            }
 
                             #Replace null characters which are 0x0000 unicode
                             if (![System.String]::IsNullOrEmpty($Buffer)) {
@@ -92,7 +107,12 @@ Function Get-SRUMTableDataRows{
                             break
                         }
                         ([Microsoft.Isam.Esent.Interop.JET_coltyp]::Text) {
-                            $Buffer = [Microsoft.Isam.Esent.Interop.Api]::RetrieveColumnAsString($Session, $JetTable.JetTableid, $Column.Columnid, [System.Text.Encoding]::UTF8)
+                            # Default string function retrieves UTF16, so we check the string type we are retrieving
+                            if ( $BlobStrType -eq [System.Text.Encoding]::UTF16 ) {
+                                $Buffer = [Microsoft.Isam.Esent.Interop.Api]::RetrieveColumnAsString($Session, $JetTable.JetTableid, $Column.Columnid)
+                            } else {
+                                $Buffer = [Microsoft.Isam.Esent.Interop.Api]::RetrieveColumnAsString($Session, $JetTable.JetTableid, $Column.Columnid, $BlobStrType)
+                            }
 
                             #Replace null characters which are 0x0000 unicode
                             if (![System.String]::IsNullOrEmpty($Buffer)) {
@@ -136,8 +156,6 @@ Function Get-SRUMTableDataRows{
                             }
                             catch {}
                         }
-
-
                             break
                         }
                         default {
@@ -146,14 +164,11 @@ Function Get-SRUMTableDataRows{
                             break
                         }
                     }
-
                      $Row | Add-Member -type NoteProperty -name $Column.Name -Value $Buffer
-
 
                 }
 
                 $DBRows += $Row
-
 
             } while ([Microsoft.Isam.Esent.Interop.Api]::TryMoveNext($Session, $JetTable.JetTableid))
         }
