@@ -29,7 +29,10 @@ Function Get-SRUMTableDataRows{
       ## Don't think so but using it might be safer to ensure proper variable is passed
       [Parameter(Position=1,Mandatory = $true)]
       [ValidateNotNull()]
-      $JetTable
+      $JetTable,
+      [Parameter(Position=2,Mandatory = $false)]
+      [ValidateNotNull()]
+      $BlobStrType=[System.Text.Encoding]::UTF8
   )
 
   Begin{
@@ -76,7 +79,7 @@ Function Get-SRUMTableDataRows{
                             break
                         }
                         ([Microsoft.Isam.Esent.Interop.JET_coltyp]::LongBinary) {
-                            $Buffer = [Microsoft.Isam.Esent.Interop.Api]::RetrieveColumnAsString($Session, $JetTable.JetTableid, $Column.Columnid, [System.Text.Encoding]::UTF8)
+                            $Buffer = [Microsoft.Isam.Esent.Interop.Api]::RetrieveColumnAsString($Session, $JetTable.JetTableid, $Column.Columnid, $BlobStrType)
                             break
                         }
                         ([Microsoft.Isam.Esent.Interop.JET_coltyp]::LongText) {
