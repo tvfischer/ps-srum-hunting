@@ -1,6 +1,8 @@
-# Ultraedit Project Files
+﻿# Ultraedit Project Files
 *.pui
 *.prj
+# Ultraedit Backup files
+*~
 
 # Prerequisites
 *.d

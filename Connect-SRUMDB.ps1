@@ -1,4 +1,4 @@
-<#
+﻿<#
 .NOTES
   Version:        1.0
   Author:         Thomas V Fischer
@@ -20,7 +20,7 @@
 .EXAMPLE
   <Example goes here. Repeat this attribute for more than one example>
 #>
-Function Get-SRUMDB{
+Function Connect-SRUMDB{
   Param(
     [Parameter(Position=0,Mandatory = $true,
      ParameterSetName = "SRUMDBPath")]
@@ -32,6 +32,8 @@ Function Get-SRUMDB{
   }
 
   Process{
+    #set-up a state condition variable maybe in the future we can expand on state
+    $JETState="OK"
     Try{
       # we are assuming the EsentDll is already loaded
       ## Point the JET methods to the database file
@@ -56,19 +58,20 @@ Function Get-SRUMDB{
       [Microsoft.Isam.Esent.Interop.JET_DBID]$DatabaseId = New-Object -TypeName Microsoft.Isam.Esent.Interop.JET_DBID
       $Temp = [Microsoft.Isam.Esent.Interop.Api]::JetAttachDatabase($Session, $Path, [Microsoft.Isam.Esent.Interop.AttachDatabaseGrbit]::ReadOnly)
       $Temp = [Microsoft.Isam.Esent.Interop.Api]::JetOpenDatabase($Session, $Path, $Connect, [ref]$DatabaseId, [Microsoft.Isam.Esent.Interop.OpenDatabaseGrbit]::ReadOnly)
-      $DatabaseId
-      $Session
-      $Connect  ### Important tells us if the database is accessible
+      
+      # $DatabaseId
+      # $Session
+      # $Connect  ### Important tells us if the database is accessible
 
       #Check the session information
     }
-
     Catch{
       # Something went wrong so return a big no way
-      $DBType="Connection FAILED"
+      $JETState="Connection FAILED"
       Break
     }
     $dbconnect = [PSCustomObject]@{
+      JETState=$JETState;
       Instance=$Instance;
       Session=$Session;
       DatabaseId=$DatabaseId;
