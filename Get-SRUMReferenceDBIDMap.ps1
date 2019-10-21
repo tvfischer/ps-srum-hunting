@@ -81,39 +81,42 @@ Function Get-SRUMReferenceDBIDMap{
       $totalProc = $theData.Count
       #We have data now let's split it apart
       $theData | foreach-object {
-        Write-Progress -id 1 -Activity "Processing the rows and building the " -Status ("Processin {0:N0} of {1:N0}" -f $j, $totalProc) -PercentComplete ([Int](($j/$totalProc) * 100)) -CurrentOperation ("Index ID: {0} Index Type: {1}" -f $_.IdIndex, $_.IdType)
-        switch($_.IdType) {
+        $tIdType = [Int]$_.IdType
+        $tIdIndex = $_.IdIndex
+        $tIdBlob = $_.IdBlob
+        Write-Progress -id 1 -Activity "Processing the rows and building the " -Status ("Processin {0:N0} of {1:N0}" -f $j, $totalProc) -PercentComplete ([Int](($j/$totalProc) * 100)) -CurrentOperation ("Index ID: {0} Index Type: {1}" -f $tIdIndex, $tIdType)
+        switch($tIdType) {
             0 { #this is an application path reference
                 $Row = New-Object PSObject
                 #The index value is the reference used in other tables
-                $Row | Add-Member -type NoteProperty -name Index -Value $_.IdIndex
-                $Row | Add-Member -type NoteProperty -name Application -Value $_.IdBlob
+                $Row | Add-Member -type NoteProperty -name Index -Value $tIdIndex
+                $Row | Add-Member -type NoteProperty -name Application -Value $tIdBlob
                 $AppsSRUM += $Row
              }
             1 { #this is the windows service reference
                 $Row = New-Object PSObject
                 #The index value is the reference used in other tables
-                $Row | Add-Member -type NoteProperty -name Index -Value $_.IdIndex
-                $Row | Add-Member -type NoteProperty -name ServiceName -Value $_.IdBlob
+                $Row | Add-Member -type NoteProperty -name Index -Value $tIdIndex
+                $Row | Add-Member -type NoteProperty -name ServiceName -Value $tIdBlob
                 $SvcAPPS += $Row
              }             
             2 { #this is the MSApp or Subservice reference 
                 $Row = New-Object PSObject
                 #The index value is the reference used in other tables
-                $Row | Add-Member -type NoteProperty -name Index -Value $_.IdIndex
-                $Row | Add-Member -type NoteProperty -name MSAppName -Value $_.IdBlob
+                $Row | Add-Member -type NoteProperty -name Index -Value $tIdIndex
+                $Row | Add-Member -type NoteProperty -name MSAppName -Value $tIdBlob
                 $MSAppSRUM += $Row
              }        
             3 { #this is the UID reference 
                 $Row = New-Object PSObject
                 #The index value is the reference used in other tables
-                $Row | Add-Member -type NoteProperty -name Index -Value $_.IdIndex
+                $Row | Add-Member -type NoteProperty -name Index -Value $tIdIndex
                 #This is going to need further processing
-                $Row | Add-Member -type NoteProperty -name GUID -Value $_.IdBlob
+                $Row | Add-Member -type NoteProperty -name GUID -Value $tIdBlob
                 $uidSRUM += $Row
              }
            default { #ok Something is wrong, this shouldn't happen
-                Write-Warning "Found an index type of {0} dropping index {1}" -f $_.IdType, $_.IdIndex
+                Write-Warning "Found an index type of {0} dropping index {1}" -f $tIdType, $tIdIndex
             }     
         }
         $j++

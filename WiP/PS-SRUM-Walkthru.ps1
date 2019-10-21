@@ -209,3 +209,26 @@ Write-Verbose -Message "Shutting down database $Path due to normal close operati
 [Microsoft.Isam.Esent.Interop.Api]::JetEndSession($Session, [Microsoft.Isam.Esent.Interop.EndSessionGrbit]::None)
 [Microsoft.Isam.Esent.Interop.Api]::JetTerm($Instance)
 Write-Verbose -Message "Completed shut down successfully."
+
+[Microsoft.Isam.Esent.Interop.Api]::JetCloseDatabase([Microsoft.Isam.Esent.Interop.JET_SESID](0x29d07db0920),[Microsoft.Isam.Esent.Interop.JET_DBID](1), [Microsoft.Isam.Esent.Interop.CloseDatabaseGrbit]::None)
+
+
+                                
+   4 $dbconn = Connect-SRUMDB $Path                                                                                                                                                                       
+   5 $dbconn                              
+                                                                                                                                                                   
+   6 . .\Get-SRUMTableDataRows.ps1                                                                                                                                                                        
+
+                                                                                                                             
+  16 . .\Get-SRUMTableNames.ps1                                                                                                                                                                          
+  19 $TBNames = Get-SRUMTableNames $dbconn.Session $dbconn.DatabaseId                                                                                                                                     
+  20 $TBNames                                                                                                                                                                                             
+  21 $TBNames.Tables    
+
+
+  43 $tabl = Open-SRUMTable $dbconn.Session $dbconn.DatabaseId "SruDbIdMapTable"                                                                                                                          
+                                                                                                                                                                                         
+  45 $tabl.TablePtr.JetTableid                                                                                                                                                                            
+  46 Write-Output -InputObject ([Microsoft.Isam.Esent.Interop.ColumnInfo[]][Microsoft.Isam.Esent.Interop.Api]::GetTableColumns($dbconn.Session, $tabl.TablePtr.JetTableid)) | ft                          
+                                                                                                                                                                                   
+  60 $theData = Get-SRUMTableDataRows $dbconn.Session $tabl.TablePtr   
