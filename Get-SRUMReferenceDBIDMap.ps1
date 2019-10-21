@@ -68,7 +68,11 @@ Function Get-SRUMReferenceDBIDMap{
     }
     
     Try{
-      $theData, $AppsSRUM, $SvcAPPS, $MSAppSRUM, $uidSRUM = @()
+      $theData = @()
+      $AppsSRUM = @()
+      $SvcAPPS = @()
+      $MSAppSRUM = @()
+      $uidSRUM = @()
       Write-Progress -id 1 -Activity "Fetching the rows from table ${TableName}" -Status "This may take awhile so hold on..."
       # OK Let's get all the rows from the DbIdMap and then we can process them into separate objects
       $theData = Get-SRUMTableDataRows $Session $PtrTable.TablePtr
@@ -116,7 +120,7 @@ Function Get-SRUMReferenceDBIDMap{
                 $uidSRUM += $Row
              }
            default { #ok Something is wrong, this shouldn't happen
-                Write-Warning "Found an index type of {0} dropping index {1}" -f $tIdType, $tIdIndex
+                Write-Warning ("Found an index type of {0} dropping index {1}" -f $tIdType, $tIdIndex)
             }     
         }
         $j++
@@ -129,7 +133,7 @@ Function Get-SRUMReferenceDBIDMap{
       return $false,"Something Failed processing the data"
     }
 
-    Rreturn $true, $AppsSRUM, $SvcAPPS, $MSAppSRUM, $uidSRUM
+    return $true, $AppsSRUM, $SvcAPPS, $MSAppSRUM, $uidSRUM
   }
 
   End{
