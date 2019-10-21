@@ -5,7 +5,7 @@
   Creation Date:  20190315
   Purpose/Change: Initial script development
 .SYNOPSIS
-   Script: Get-SRUMDB
+   Script: Get-SRUMReferenceDBIDMap
    Open the SRUM database with ESENT DLL
 .DESCRIPTION
   This function retrieves the ID Map values and puts them into a table for mapping IDs with-in the other tables to values or constants
@@ -15,8 +15,6 @@
 .INPUTS
   <Inputs if any, otherwise state None>
 .OUTPUTS
-  <Outputs if any, otherwise state None - example: Log file stored in C:\Windows\Temp\<name>.log>
-
 
 .EXAMPLE
   <Example goes here. Repeat this attribute for more than one example>
@@ -39,4 +37,98 @@
         3       User Identifier            IdBlob contains a Windows NT Security Identifier (SID)
 
 #>
+Function Get-SRUMReferenceDBIDMap{
+  Param(
+      [Parameter(Position=0,Mandatory = $true)]
+      [ValidateNotNull()]
+      $Session,
+        ## Need to figure out if I should include the variable type [Microsoft.Isam.Esent.Interop.JET_SESID].
+        ## Don't think so but using it might be safer to ensure proper variable is passed
+      [Parameter(Position=1,Mandatory = $true)]
+      [ValidateNotNull()]
+      $DatabaseId,
+      # Optional 3rd parameter is the name of the database, defaults to SruDbIdMapTable using this mechanism in case it changes in the future
+      [Parameter(Position=2,Mandatory = $false)]
+      [ValidateNotNull()]
+      $TableName="SruDbIdMapTable"
+  )
 
+  Begin{
+  }
+
+  Process{
+    #set-up a state condition variable maybe in the future we can expand on state
+    $JETState="OK"
+    #Open the table
+    $PtrTable = Open-SRUMTable $Session $DatabaseId $TableName 
+    Write-Host $PtrTable
+    if ( $PtrTable.StatusID -ne 1 ){
+        Write-Warning "Unable to access ${TableName}"
+        return $false,"${TableName} not available"        
+    }
+    
+    Try{
+      $theData, $AppsSRUM, $SvcAPPS, $MSAppSRUM, $uidSRUM = @()
+      Write-Progress -id 1 -Activity "Fetching the rows from table ${TableName}" -Status "This may take awhile so hold on..."
+      # OK Let's get all the rows from the DbIdMap and then we can process them into separate objects
+      $theData = Get-SRUMTableDataRows $Session $PtrTable.TablePtr
+      if ( $theData.Count -eq 0) {
+        #We didn't read the table no records found
+        Write-Warning "No records in ${TableName}"
+        return $false,"No records in ${TableName}"      
+      }
+      $j=1
+      $totalProc = $theData.Count
+      #We have data now let's split it apart
+      $theData | foreach-object {
+        Write-Progress -id 1 -Activity "Processing the rows and building the " -Status ("Processin {0:N0} of {1:N0}" -f $j, $totalProc) -PercentComplete ([Int](($j/$totalProc) * 100)) -CurrentOperation ("Index ID: {0} Index Type: {1}" -f $_.IdIndex, $_.IdType)
+        switch($_.IdType) {
+            0 { #this is an application path reference
+                $Row = New-Object PSObject
+                #The index value is the reference used in other tables
+                $Row | Add-Member -type NoteProperty -name Index -Value $_.IdIndex
+                $Row | Add-Member -type NoteProperty -name Application -Value $_.IdBlob
+                $AppsSRUM += $Row
+             }
+            1 { #this is the windows service reference
+                $Row = New-Object PSObject
+                #The index value is the reference used in other tables
+                $Row | Add-Member -type NoteProperty -name Index -Value $_.IdIndex
+                $Row | Add-Member -type NoteProperty -name ServiceName -Value $_.IdBlob
+                $SvcAPPS += $Row
+             }             
+            2 { #this is the MSApp or Subservice reference 
+                $Row = New-Object PSObject
+                #The index value is the reference used in other tables
+                $Row | Add-Member -type NoteProperty -name Index -Value $_.IdIndex
+                $Row | Add-Member -type NoteProperty -name MSAppName -Value $_.IdBlob
+                $MSAppSRUM += $Row
+             }        
+            3 { #this is the UID reference 
+                $Row = New-Object PSObject
+                #The index value is the reference used in other tables
+                $Row | Add-Member -type NoteProperty -name Index -Value $_.IdIndex
+                #This is going to need further processing
+                $Row | Add-Member -type NoteProperty -name GUID -Value $_.IdBlob
+                $uidSRUM += $Row
+             }
+           default { #ok Something is wrong, this shouldn't happen
+                Write-Warning "Found an index type of {0} dropping index {1}" -f $_.IdType, $_.IdIndex
+            }     
+        }
+        $j++
+      }
+      
+    }
+    Catch{
+      # Something went wrong so return a big no way
+      Write-Warning "Unable to process the reference database"
+      return $false,"Something Failed processing the data"
+    }
+
+    Rreturn $true, $AppsSRUM, $SvcAPPS, $MSAppSRUM, $uidSRUM
+  }
+
+  End{
+  }
+}

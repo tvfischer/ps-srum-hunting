@@ -1,4 +1,4 @@
-<#
+﻿<#
 .NOTES
   Version:        1.01
   Author:         Thomas V Fischer
@@ -23,26 +23,36 @@
 #>
 Function Get-SRUMTableNames{
   Param(
-        [Parameter(Position=0,Mandatory = $true),
-        ParameterSetNAme = "Session"]
+        [Parameter(Position=0,Mandatory = $true)]
         [ValidateNotNull()]
-        $Session
+        $Session,
+        ## Need to figure out if I should include the variable type [Microsoft.Isam.Esent.Interop.JET_SESID].
+        ## Don't think so but using it might be safer to ensure proper variable is passed
+        [Parameter(Position=1,Mandatory = $true)]
+        [ValidateNotNull()]
+        $DatabaseId
   )
 
   Begin{
   }
 
   Process{
+    $TableNames = [PSCustomObject]@{StatusID=0;Status="";Tables=@()}
     $DBNames = @()
     Try{
-      [Microsoft.Isam.Esent.Interop.Api]::GetTableNames($Session, $DatabaseId)
+      $DBNames = [Microsoft.Isam.Esent.Interop.Api]::GetTableNames($Session, $DatabaseId)
     }
-
     Catch{
-      Write-Output "Could not fetch table names"
-      $TableNames = [PSCustomObject]@{StatusID=0;Status="Error";$DBNames}
+      Write-Warning "Could not fetch table names"
+      $TableNames.StatusID=0
+      $TableNames.Status="Error"
+      $TableNames
       Break
     }
+    $TableNames.StatusID=1
+    $TableNames.Status="OK"
+    $TableNames.Tables=$DBNames
+    return $TableNames
   }
 
   End{

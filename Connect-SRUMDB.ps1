@@ -69,6 +69,8 @@ Function Connect-SRUMDB{
       # Something went wrong so return a big no way
       $JETState="Connection FAILED"
       Write-Warning "Unable to connect to the database ${path}"
+      $dbconnect = [PSCustomObject]@{
+         JETState=$JETState}
       Break
     }
     $dbconnect = [PSCustomObject]@{
