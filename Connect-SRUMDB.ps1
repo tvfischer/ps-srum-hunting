@@ -68,6 +68,7 @@ Function Connect-SRUMDB{
     Catch{
       # Something went wrong so return a big no way
       $JETState="Connection FAILED"
+      Write-Warning "Unable to connect to the database ${path}"
       Break
     }
     $dbconnect = [PSCustomObject]@{
@@ -80,7 +81,8 @@ Function Connect-SRUMDB{
       DBType=$DBType;
       DBPageSize=$PageSize; DBFileType=$FileType}
 
-    Write-Output -InputObject ($dbconnect)
+    #Write-Output -InputObject ($dbconnect)
+    Write-Host "Connection to ${path} status is ${JETState}"
     Return $dbconnect
   }
 
