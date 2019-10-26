@@ -20,7 +20,7 @@
 .EXAMPLE
   <Example goes here. Repeat this attribute for more than one example>
 #>
-Function Connect-SRUMDB{
+Function Close-SRUMDB{
   Param(
     [Parameter(Position=0,Mandatory = $true,
      ParameterSetName = "SRUMConnection")]
